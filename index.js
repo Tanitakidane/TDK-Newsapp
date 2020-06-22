@@ -23,7 +23,7 @@ app.engine('handlebars',handlebars({
 
 
 
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 //Serves static files (we need it to import a css file)
 app.use(express.static('public'))
 app.use(express.json());
