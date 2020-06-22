@@ -1,0 +1,204 @@
+
+
+
+
+<html>
+
+<head>
+<style>
+
+</style>
+</head>
+
+
+<body>
+
+<form method="GET" action="/search">
+
+
+<div class="ui input" style="margin-left: 30px;">
+  <input type="text" placeholder="Search..." name="search">
+</div>
+
+<button type="submit" class="ui primary basic button">Click To Search</button>
+
+</form>
+<div class="ui grid" style="padding: 40px;">
+
+
+
+
+  {{#each data}}
+
+ 
+  <div class="four wide column">
+    <h1><a  target="_blank" href='{{this.url}}'>{{this.title}}</a></h1>
+
+    <p>{{this.description}}</p>
+
+    <button type="submit" class="ui primary basic button" id="delete-{{this._id}}" onclick="deletearticle(this.id)">Delete Article</button>
+
+    
+<div class="ui comments">
+  <h3 class="ui dividing header">Comments</h3>
+
+   {{#each comments}}
+
+    <div class="comment">
+    <a class="avatar">
+      <img src="https://api.adorable.io/avatars/285/abott@adorable.png">
+    </a>
+    <div class="content">
+      <a class="author">{{this.username}}</a>
+      <div class="metadata">
+        <span class="date">{{this.date}}</span>
+        <span style="cursor: pointer;" data-parent="{{../_id}}"  onclick="deletecomment(this)" data-child="{{this._id}}"><i class="fa fa-trash" aria-hidden="true"></i></span>
+      </div>
+      <div class="text">
+        {{this.text}}
+      </div>
+     
+    </div>
+  </div>
+  
+  {{/each}}
+ 
+  
+  <form class="ui reply form">
+    <div class="field">
+      <textarea id="comment-{{this._id}}"></textarea>
+    </div>
+    <div class="ui blue labeled submit icon button" id={{this._id}} onclick="addcomment(this.id)">
+      <i class="icon edit" ></i> Add Comments
+    </div>
+  </form>
+</div>
+  </div>
+
+  {{/each}}
+
+
+</div>
+
+
+<script src="https://kit.fontawesome.com/5ade3a0936.js" crossorigin="anonymous"></script>
+
+</script>
+
+<script>
+
+
+function addcomment(id)
+{
+ // alert(id);
+
+  let comment=document.getElementById(`comment-${id}`).value
+  console.log(comment);
+  if(comment!="")
+  {
+    const data = { username: 'Tanita',id:id ,comment:comment,date:new Date().toString()};
+
+fetch('/addcomment', {
+  method: 'POST', // or 'PUT'
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(data),
+})
+.then(response => response.json())
+.then(data => {
+  alert('Success', data["message"]);
+  location.reload();
+})
+.catch((error) => {
+  console.error('Error:', error);
+});
+
+  }
+
+  else{
+    alert("Please Enter Some Comment");
+  }
+
+
+
+
+
+}
+
+
+
+function deletecomment(obj)
+{
+
+const parentid=obj.getAttribute('data-parent');
+const id=obj.getAttribute('data-child');
+//console.log(parentid);
+//console.log(id);
+const data = { id:id,parentid:parentid};
+
+fetch('/deletecomment', {
+  method: 'POST', // or 'PUT'
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(data),
+})
+.then(response => response.json())
+.then(data => {
+  alert('Success:', data["message"]);
+  location.reload();
+})
+.catch((error) => {
+  console.error('Error:', error);
+});
+
+
+
+
+
+}
+
+
+function deletearticle(id)
+{
+  id=id.split("-")[1];
+  
+const data = { id:id};
+
+fetch('/deleteArticle', {
+  method: 'POST', // or 'PUT'
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(data),
+})
+.then(response => response.json())
+.then(data => {
+  alert('Success:', data["message"]);
+  location.reload();
+})
+.catch((error) => {
+  console.error('Error:', error);
+});
+
+
+}
+
+</script>
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
